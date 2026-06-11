@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MusicCollection.ViewModels"
+             x:Class="MusicCollection.Views.AlbumListView"
+             x:DataType="vm:AlbumListViewModel">
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+    <!-- Hlavička -->
+    <Border Grid.Row="0" Background="#1a1a2e" Padding="24,16">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
+          <TextBlock Text="🎵" FontSize="28"/>
+          <TextBlock Text="Hudební sbírka" FontSize="22" FontWeight="Bold"
+                     Foreground="White" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Button Grid.Column="1" Content="+ Přidat album"
+                Command="{Binding PridatCommand}"
+                Classes="primary"/>
+      </Grid>
+    </Border>
+
+    <!-- Chyba -->
+    <Border Grid.Row="1" Background="#ff4444" Padding="12,8"
+            IsVisible="{Binding Chyba, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+      <TextBlock Text="{Binding Chyba}" Foreground="White"/>
+    </Border>
+
+    <!-- Seznam alb -->
+    <ScrollViewer Grid.Row="2" Padding="16">
+      <ItemsControl ItemsSource="{Binding Albums}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Classes="card" Margin="0,0,0,10">
+              <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="2">
+                  <TextBlock Text="{Binding Nazev}" FontSize="16" FontWeight="SemiBold"
+                             Foreground="#e0e0ff"/>
+                  <TextBlock FontSize="13" Foreground="#9999bb">
+                    <Run Text="{Binding Interpret}"/>
+                    <Run Text=" · "/>
+                    <Run Text="{Binding Rok}"/>
+                    <Run Text=" · "/>
+                    <Run Text="{Binding Zanr.Nazev}"/>
+                  </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
+                            VerticalAlignment="Center">
+                  <Button Content="Detail"
+                          Command="{Binding $parent[UserControl].((vm:AlbumListViewModel)DataContext).DetailCommand}"
+                          CommandParameter="{Binding}"
+                          Classes="secondary"/>
+                  <Button Content="✏️"
+                          Command="{Binding $parent[UserControl].((vm:AlbumListViewModel)DataContext).UpravitCommand}"
+                          CommandParameter="{Binding}"
+                          Classes="icon"/>
+                  <Button Content="🗑️"
+                          Command="{Binding $parent[UserControl].((vm:AlbumListViewModel)DataContext).SmazatCommand}"
+                          CommandParameter="{Binding}"
+                          Classes="icon danger"/>
+                </StackPanel>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+
+    <!-- Footer info -->
+    <TextBlock Grid.Row="3" Padding="16,8"
+               Foreground="#666688" FontSize="12"
+               Text="{Binding Albums.Count, StringFormat='Celkem alb: {0}'}"/>
+  </Grid>
+</UserControl>
