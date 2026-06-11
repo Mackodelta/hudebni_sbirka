@@ -1,0 +1,16 @@
+﻿# Prostředí — NIKDY necommitovat!
+.env
+
+# Build výstupy
+bin/
+obj/
+out/
+
+# IDE
+.idea/
+.vscode/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db

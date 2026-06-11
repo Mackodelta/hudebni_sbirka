@@ -1,0 +1,108 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MusicCollection.ViewModels"
+             x:Class="MusicCollection.Views.AlbumDetailView"
+             x:DataType="vm:AlbumDetailViewModel">
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+    <!-- Hlavička -->
+    <Border Grid.Row="0" Background="#1a1a2e" Padding="24,16">
+      <Grid ColumnDefinitions="Auto,*">
+        <Button Grid.Column="0" Content="← Zpět" Command="{Binding ZpetCommand}"
+                Classes="ghost" Margin="0,0,16,0"/>
+        <StackPanel Grid.Column="1">
+          <TextBlock Text="{Binding Album.Nazev}" FontSize="20" FontWeight="Bold"
+                     Foreground="White"/>
+          <TextBlock FontSize="13" Foreground="#9999bb">
+            <Run Text="{Binding Album.Interpret}"/>
+            <Run Text=" · "/>
+            <Run Text="{Binding Album.Rok}"/>
+            <Run Text=" · "/>
+            <Run Text="{Binding Album.Zanr.Nazev}"/>
+          </TextBlock>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Chyba -->
+    <Border Grid.Row="1" Background="#ff4444" Padding="12,8"
+            IsVisible="{Binding Chyba, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+      <TextBlock Text="{Binding Chyba}" Foreground="White"/>
+    </Border>
+
+    <Grid Grid.Row="2" ColumnDefinitions="*,340">
+
+      <!-- Levá část: seznam skladeb -->
+      <Grid Grid.Column="0" RowDefinitions="Auto,*" Margin="16">
+        <TextBlock Grid.Row="0" Text="Skladby" FontSize="16" FontWeight="SemiBold"
+                   Foreground="#e0e0ff" Margin="0,0,0,10"/>
+        <ScrollViewer Grid.Row="1">
+          <ItemsControl ItemsSource="{Binding Skladby}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Classes="card" Margin="0,0,0,6">
+                  <Grid ColumnDefinitions="30,*,Auto,Auto,Auto">
+                    <TextBlock Grid.Column="0" Text="{Binding CisloStopy}"
+                               Foreground="#6666aa" VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Margin="8,0">
+                      <TextBlock Text="{Binding Nazev}" Foreground="#e0e0ff"/>
+                      <TextBlock Text="{Binding DelkaFormatovana}" FontSize="12"
+                                 Foreground="#666688"/>
+                    </StackPanel>
+                    <Button Grid.Column="3" Content="✏️"
+                            Command="{Binding $parent[UserControl].((vm:AlbumDetailViewModel)DataContext).EditovatSkladbuCommand}"
+                            CommandParameter="{Binding}"
+                            Classes="icon" Margin="4,0"/>
+                    <Button Grid.Column="4" Content="🗑️"
+                            Command="{Binding $parent[UserControl].((vm:AlbumDetailViewModel)DataContext).SmazatSkladbuCommand}"
+                            CommandParameter="{Binding}"
+                            Classes="icon danger"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- Pravá část: formulář skladby -->
+      <Border Grid.Column="1" Background="#16162a" Padding="20" Margin="0,16,16,16"
+              CornerRadius="8">
+        <StackPanel Spacing="12">
+          <TextBlock Text="{Binding FormularTitulek}"
+                     FontSize="15" FontWeight="SemiBold" Foreground="#e0e0ff"/>
+
+          <StackPanel Spacing="4">
+            <TextBlock Text="Název *" Classes="label"/>
+            <TextBox Text="{Binding NovaNazev}" Watermark="Název skladby"/>
+          </StackPanel>
+
+          <StackPanel Spacing="4">
+            <TextBlock Text="Délka (sekundy) *" Classes="label"/>
+            <TextBox Text="{Binding NovaDelka}" Watermark="např. 215"/>
+          </StackPanel>
+
+          <StackPanel Spacing="4">
+            <TextBlock Text="Číslo stopy *" Classes="label"/>
+            <TextBox Text="{Binding NovaCislo}" Watermark="např. 1"/>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+            <Button Content="{Binding UlozitText}"
+                    Command="{Binding UlozitSkladbuCommand}"
+                    Classes="primary" HorizontalAlignment="Stretch"/>
+            <Button Content="Zrušit" Command="{Binding ZrusitEditCommand}"
+                    Classes="secondary"
+                    IsVisible="{Binding EditMode}"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- Footer: počet skladeb -->
+    <TextBlock Grid.Row="3" Padding="16,8" Foreground="#666688" FontSize="12"
+               Text="{Binding Skladby.Count, StringFormat='Skladeb: {0}'}"/>
+  </Grid>
+</UserControl>
